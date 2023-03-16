@@ -6,36 +6,36 @@ import { productModel } from '../../dao/models/productModel.js'
 const productManager = new Products()
 const router = Router()
 
-router.get('/', async (req, res) => {
-    const { limit, page, query, sort } = req.query
-    try {        
-        const products = await productManager.getProducts()
-
-        const prod = await productModel.paginate({ category: query }, { limit: limit, page: page, sort:{ price: sort}})
-        
-        if (prod.hasNextPage) {
-            prod.nextLink = `localhost:8080/api/products?query=${query}&limit=${limit}&page=${page++}&sort=${sort}`
-        }
-
-        // if (prod.hasPrevPage) {
-        //     prod.prevLink = `localhost:8080/api/products?query=${query}&limit=${limit}&page=${page--}&sort=${sort}`
-        // }
-        console.log(prod)
-
-        res.send({status: 'success', payload: prod})
-    } catch (error) {
-        res.status(500).send({ error })
-    }
-})
 // router.get('/', async (req, res) => {
-//     try {
+//     const { limit, page, query, sort } = req.query
+//     try {        
 //         const products = await productManager.getProducts()
 
-//         res.send({status: 'success', payload: products})
+//         const prod = await productModel.paginate({ category: query }, { limit: limit, page: page, sort:{ price: sort}})
+        
+//         // if (prod.hasNextPage) {
+//         //     prod.nextLink = `localhost:8080/api/products?query=${query}&limit=${limit}&page=${page++}&sort=${sort}`
+//         // }
+
+//         // if (prod.hasPrevPage) {
+//         //     prod.prevLink = `localhost:8080/api/products?query=${query}&limit=${limit}&page=${page--}&sort=${sort}`
+//         // }
+//         console.log(prod)
+
+//         res.send({status: 'success', payload: prod})
 //     } catch (error) {
 //         res.status(500).send({ error })
 //     }
 // })
+router.get('/', async (req, res) => {
+    try {
+        const products = await productManager.getProducts()
+
+        res.send({status: 'success', payload: products})
+    } catch (error) {
+        res.status(500).send({ error })
+    }
+})
 
 router.get('/:pid', async (req, res) => {
     try {

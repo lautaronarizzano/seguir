@@ -34,30 +34,14 @@ router.get('/:cid', async (req, res) => {
 })
 
 router.post('/:cid/product/:pid', async (req, res) => {
-    // const cid = req.params.cid
-    // const pid = req.params.pid
-    // try {
-    //     const result = await cartsManager.addProductInCart(cid, pid)
-    //     res.send({status: 'success', payload: result})
-    // } catch (error) {
-    //     res.status(500).send({error: 'el error es ' + error})
-    // }
-
     const cid = req.params.cid
+    const pid = req.params.pid
+    try {
+        const result = await cartsManager.addProductInCart(cid, pid)
+        res.send({status: 'success', payload: result})
+    } catch (error) {
+        res.status(500).send({error: 'el error es ' + error})
+    }
 
-const pid = req.params.pid
-
-//console.log(prodId)
-
-if(!cid || !pid ) {
-
-return res.status(400).send({status: 'error', message: 'Incomplete values'});
-
-}
-
-await cartsManager.saveById(cid,pid)
-
-res.send({status: 'sucess', message: 'Product created'});
 })
-
 export default router
