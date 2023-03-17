@@ -33,15 +33,52 @@ router.get('/:cid', async (req, res) => {
     }
 })
 
-router.post('/:cid/product/:pid', async (req, res) => {
+router.post('/:cid/products/:pid', async (req, res) => {
     const cid = req.params.cid
     const pid = req.params.pid
     try {
         const result = await cartsManager.addProductInCart(cid, pid)
-        res.send({status: 'success', payload: result})
+        res.send({status: 'success', message: 'The product with id ' + pid + ' was added successfully from cart ' + cid + '', payload:result})
     } catch (error) {
         res.status(500).send({error: 'el error es ' + error})
     }
 
 })
+
+router.delete('/:cid/products/:pid', async (req, res) => {
+    const cid = req.params.cid;
+    const pid = req.params.pid;
+    try {
+        const result = await cartsManager.deleteProductInCart(cid, pid)
+        res.send({status: 'success', message: 'The product with id ' + pid + ' was deleted successfully from cart ' + cid + ''})
+    } catch (error) {
+        res.status(500).send({error: 'el error es ' + error})
+    }
+
+});
+
+router.delete('/:cid', async (req, res) => {
+    const cid = req.params.cid
+    try {
+        const result = await cartsManager.deleteCart(cid)
+        res.send({status: 'success', message: 'The cart with id '+ cid + 'was deleted successfully', payload: result})
+    } catch (error) {
+        // console.log(error)
+        res.status(500).send({error: 'el error es ' + error})
+    }
+})
+// router.put('/:cid/products/:pid', async (req, res) => {
+//     const cid = req.params.cid;
+//     const pid = req.params.pid;
+//     const quantity = req.body
+//     try {
+//         const result = await cartsManager.updateQuantity(cid, pid, quantity)
+//         res.send({status: 'success', message: 'The product with id ' + pid + ' was changed it quantity from cart ' + cid + '', payload: result})
+//     } catch (error) {
+//         // console.log(error)
+//         res.status(500).send({error: 'el error es ' + error})
+//     }
+// })
+
+
 export default router
