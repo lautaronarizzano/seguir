@@ -12,9 +12,22 @@ router.get('/', async (req, res) => {
     res.render('index', {products})
 })
 
-router.get('/', async (req, res) => {
-    const carts = await cartsManager.getCarts()
-    res.render('carts', {carts})
-})
+router.get('/carts/:cid', async (req, res) => {
+    let cartId = req.params.cid;
+    try {
+        let cartProm = await cartsManager.getCartById(cartId); 
+    let cartArray = cartProm.products; 
+    let cartProducts = cartArray.map(function(productObj){
+        // validarUrlIndividual(productObj.product);
+        return productObj = {title:productObj.product.title, description:productObj.product.description,
+            code:productObj.product.code, quantity:productObj.quantity, price:productObj.product.price}
+    })
+    res.render('carts',{cartProducts})
+    } catch (error) {
+        console.log('el error es: ' + error)
+    }
+
+}
+)
 
 export default router

@@ -67,18 +67,26 @@ router.delete('/:cid', async (req, res) => {
         res.status(500).send({error: 'el error es ' + error})
     }
 })
-// router.put('/:cid/products/:pid', async (req, res) => {
-//     const cid = req.params.cid;
-//     const pid = req.params.pid;
-//     const quantity = req.body
-//     try {
-//         const result = await cartsManager.updateQuantity(cid, pid, quantity)
-//         res.send({status: 'success', message: 'The product with id ' + pid + ' was changed it quantity from cart ' + cid + '', payload: result})
-//     } catch (error) {
-//         // console.log(error)
-//         res.status(500).send({error: 'el error es ' + error})
-//     }
-// })
+router.put('/:cid/products/:pid', async (req, res) => {
+    const cid = req.params.cid;
+    const pid = req.params.pid;
+    const quantity = req.body
+    try {
+        const result = await cartsManager.updateQuantity(cid, pid, quantity)
+        res.send({status: 'success', message: 'The product with id ' + pid + ' was changed it quantity from cart ' + cid + '', payload: result})
+    } catch (error) {
+        // console.log(error)
+        res.status(500).send({error: 'el error es ' + error})
+    }
+})
+
+router.put('/:cid', async (req, res) => {
+    const cartId = req.params.cid;
+    const products = req.body;
+    const result = cartsManager.updateCart(cartId,products)
+        res.send({status: 'success',message: 'The cart with id ' + cartId + ' was updated successfully with the required products.'});
+        });
+
 
 
 export default router

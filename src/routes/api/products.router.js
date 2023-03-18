@@ -6,27 +6,34 @@ import { productModel } from '../../dao/models/productModel.js'
 const productManager = new Products()
 const router = Router()
 
-// router.get('/', async (req, res) => {
-//     const { limit, page, query, sort } = req.query
-//     try {        
-//         const products = await productManager.getProducts()
+router.get('/', async (req, res) => {
+    const { limit = 10, page = 1, query , sort } = req.query
+    try {        
 
-//         const prod = await productModel.paginate({ category: query }, { limit: limit, page: page, sort:{ price: sort}})
-        
-//         // if (prod.hasNextPage) {
-//         //     prod.nextLink = `localhost:8080/api/products?query=${query}&limit=${limit}&page=${page++}&sort=${sort}`
-//         // }
+        if (query == undefined) {
+            const productsPaginates = await productModel.paginate({ }, {limit: limit, page: page, sort:{ price: sort}})
+            res.send({status: 'success', payload: productsPaginates})
+            
+        } else {
+            if(query == "comida" || query == "bebida") {
+                const productsPaginates = await productModel.paginate({ category: query }, {limit: limit, page: page, sort:{ price: sort}})
+                res.send({status: 'success', payload: productsPaginates})
+            }
+            else if(query == "true" || query == "false"){
+                const productsPaginates = await productModel.paginate({ status: query }, {limit: limit, page: page, sort:{ price: sort}})
+                res.send({status: 'success', payload: productsPaginates})
+            }
+            else{
+                console.log('query is not valid')
+                res.send({status: error, payload: 'query is not valid'})
+            }
+        }
 
-//         // if (prod.hasPrevPage) {
-//         //     prod.prevLink = `localhost:8080/api/products?query=${query}&limit=${limit}&page=${page--}&sort=${sort}`
-//         // }
-//         console.log(prod)
-
-//         res.send({status: 'success', payload: prod})
-//     } catch (error) {
-//         res.status(500).send({ error })
-//     }
-// })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({ error })
+    }
+})
 router.get('/', async (req, res) => {
     try {
         const products = await productManager.getProducts()

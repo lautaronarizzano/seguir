@@ -36,6 +36,8 @@ export default class Carts {
         // const cartToUpdate = await cartsModel.findOne({_id: cid})
         const cartToUpdate = await this.getById(cid)
 
+        if(!cid || !pid) return console.log('cid or pid undefined')
+
         const addPost = async (post) =>{
             const existingPost = cartToUpdate.products.find(p => p.product == post);
             if (existingPost) {
@@ -87,14 +89,18 @@ export default class Carts {
     updateQuantity = async(cid, pid, quantity) => {
         const cartToUpdate = await this.getById(cid)
 
-        const find = cartToUpdate.products.find(p => p._id == pid)
+        const find = cartToUpdate.products.find(p => p.product == pid)
 
-        find.quantity = quantity
+        find.quantity = quantity.quantity
 
         const result = cartsModel.updateOne({_id: cid }, cartToUpdate)
 
         return result
 
+    }
+
+    updateCart = async(cid, newCart) => {
+        const result = await cartsModel.updateOne({_id: cid}, newCart)
     }
 }
 
