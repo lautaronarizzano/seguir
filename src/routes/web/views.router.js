@@ -26,7 +26,7 @@ router.get('/products', async (req, res) => {
             res.render('products', {products})
             
         } else {
-            if(query == "comida" || query == "bebida") {
+            if(query == "comida" || query == "bebida" || query == "complemento") {
                 const productsPaginates = await productModel.paginate({ category: query }, {limit: limit, page: page, sort:{ price: sort}, lean:true})
                 const products = productsPaginates.docs
             res.render('products', {products})
@@ -56,9 +56,9 @@ router.get('/carts/:cid', async (req, res) => {
     const cartProducts = cartArray.map(function(productObj){
         // validarUrlIndividual(productObj.product);
         return productObj = {title:productObj.product.title, description:productObj.product.description,
-            code:productObj.product.code, quantity:productObj.quantity, price:productObj.product.price, stock:productObj.product.stock,category:productObj.product.category}
+            code:productObj.product.code, quantity:productObj.quantity, price:productObj.product.price, stock:productObj.product.stock,category:productObj.product.category,thumbnail:productObj.product.thumbnail}
     })
-    res.render('prueba',{cartProducts})
+    res.render('carts',{cartProducts})
     } catch (error) {
         console.log(error)
     }

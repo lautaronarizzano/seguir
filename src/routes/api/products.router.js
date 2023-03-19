@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
             })
             
         } else {
-            if(query == "comida" || query == "bebida") {
+            if(query == "comida" || query == "bebida" || query == "complemento") {
                 const productsPaginates = await productModel.paginate({ category: query }, {limit: limit, page: page, sort:{ price: sort}}, (err, result) => {
                     const nextPage = result.hasNextPage ? `localhost:8080/api/products?query=${query}&limit=${limit}&page=${result.nextPage}`: null
                     const prevPage = result.hasPrevPage ? `localhost:8080/api/products?query=${query}limit=${limit}&page=${result.prevPage}`: null
