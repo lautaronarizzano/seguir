@@ -23,10 +23,11 @@ app.set('view engine', 'handlebars')
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use('/chat', chatRouter)
+// app.use('/chat', chatRouter)
 app.use('/', viewsRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
+
 
 try {
     await mongoose.connect('mongodb+srv://lautaronarizzano:QZoTw0N0bZ1xU1Te@codercluster.2kusi8q.mongodb.net/?retryWrites=true&w=majority')

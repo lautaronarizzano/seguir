@@ -17,9 +17,9 @@ export default class Carts {
         return searchedCart;
     }
 
-    getCartById = async (id) => {
+    getCartById = async (cid) => {
         const result = await cartsModel.findOne({
-            _id: id
+            "_id": cid
         }).populate('products.product')
         if(!result || result.length == 0) {
             return 'Cart not found'

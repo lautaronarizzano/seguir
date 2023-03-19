@@ -11,17 +11,41 @@ router.get('/', async (req, res) => {
     try {        
 
         if (query == undefined) {
-            const productsPaginates = await productModel.paginate({ }, {limit: limit, page: page, sort:{ price: sort}})
-            res.send({status: 'success', payload: productsPaginates})
+            const productsPaginates = await productModel.paginate({ }, {limit: limit, page: page, sort:{ price: sort}}, (err, result) => {
+                    const nextPage = result.hasNextPage && `localhost:8080/api/products?limit=${limit}&page=${result.nextPage}`
+                    const prevPage = result.hasPrevPage && `localhost:8080/api/products?limit=${limit}&page=${result.prevPage}`
+                const response = {
+                    ...result,
+                    nextLink: nextPage,
+                    prevLink: prevPage 
+                }
+                res.send({status: 'success', payload: response})
+            })
             
         } else {
             if(query == "comida" || query == "bebida") {
-                const productsPaginates = await productModel.paginate({ category: query }, {limit: limit, page: page, sort:{ price: sort}})
-                res.send({status: 'success', payload: productsPaginates})
+                const productsPaginates = await productModel.paginate({ category: query }, {limit: limit, page: page, sort:{ price: sort}}, (err, result) => {
+                    const nextPage = result.hasNextPage ? `localhost:8080/api/products?query=${query}&limit=${limit}&page=${result.nextPage}`: null
+                    const prevPage = result.hasPrevPage ? `localhost:8080/api/products?query=${query}limit=${limit}&page=${result.prevPage}`: null
+                const response = {
+                    ...result,
+                    nextLink: nextPage,
+                    prevLink: prevPage 
+                }
+                res.send({status: 'success', payload: response})
+                })
             }
             else if(query == "true" || query == "false"){
-                const productsPaginates = await productModel.paginate({ status: query }, {limit: limit, page: page, sort:{ price: sort}})
-                res.send({status: 'success', payload: productsPaginates})
+                const productsPaginates = await productModel.paginate({ status: query }, {limit: limit, page: page, sort:{ price: sort}}, (err, result) => {
+                    const nextPage = result.hasNextPage ? `localhost:8080/api/products?query=${query}&limit=${limit}&page=${result.nextPage}`: null
+                    const prevPage = result.hasPrevPage ? `localhost:8080/api/products?query=${query}limit=${limit}&page=${result.prevPage}`: null
+                const response = {
+                    ...result,
+                    nextLink: nextPage,
+                    prevLink: prevPage 
+                }
+                res.send({status: 'success', payload: response})
+                })
             }
             else{
                 console.log('query is not valid')
@@ -31,15 +55,6 @@ router.get('/', async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        res.status(500).send({ error })
-    }
-})
-router.get('/', async (req, res) => {
-    try {
-        const products = await productManager.getProducts()
-
-        res.send({status: 'success', payload: products})
-    } catch (error) {
         res.status(500).send({ error })
     }
 })
