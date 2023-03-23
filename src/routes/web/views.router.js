@@ -2,28 +2,39 @@ import { Router } from 'express'
 import Products from '../../dao/dbManagers/products.js'
 import Carts from '../../dao/dbManagers/carts.js'
 import { productModel } from '../../dao/models/productModel.js'
-import handlebars from 'express-handlebars'
 
 const productsManager = new Products()
 const cartsManager = new Carts()
 
 const router = Router()
 
-router.get('/', async (req, res) => {
-    const products = await productsManager.getProducts()
-    res.render('index', {products})
+const publicAccess = (req, res, next) => {
+    if (req.session.user) return res.redirect('/');
+    next();
+}
+
+const privateAccess = (req, res, next) => {
+    if (!req.session.user) return res.redirect('/login');
+    next();
+}
+
+router.get('/register', publicAccess, (req, res) => {
+    res.render('register')
 })
 
-router.get('/products', async (req, res) => {
+router.get('/login',publicAccess, (req, res) => {
+    res.render('login')
+})
+
+router.get('/products',privateAccess,  async (req, res) => {
     const { limit = 10, page = 1, query , sort } = req.query
-    
     
     try {        
 
         if (query == undefined) {
             const productsPaginates = await productModel.paginate({ }, {limit: limit, page: page, sort:{ price: sort}, lean:true})
             const products = productsPaginates.docs
-            res.render('products', {products})
+            res.render('products', {products, user: req.session.user})
             
         } else {
             if(query == "comida" || query == "bebida" || query == "complemento") {

@@ -1,14 +1,17 @@
 import { Server } from 'socket.io'
 import express from 'express'
 import __dirname from './utils.js'
+import session from 'express-session'
 import chatRouter from './routes/web/chat.router.js'
 import productsRouter from './routes/api/products.router.js'
 import cartsRouter from './routes/api/carts.router.js'
 import viewsRouter from './routes/web/views.router.js'
+import sessionsRouter from './routes/api/sessions.router.js'
 import handlebars from 'express-handlebars'
 import mongoose from 'mongoose'
 import Chats from './dao/dbManagers/chat.js'
 import messageModel from './dao/models/messageModel.js'
+import MongoStore from 'connect-mongo'
 
 const chatManager = new Chats()
 
@@ -27,6 +30,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/', viewsRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
+app.use('/api/sessions', sessionsRouter)
 
 
 try {
@@ -35,25 +39,35 @@ try {
     console.log(error)
 }
 
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: 'mongodb+srv://lautaronarizzano:QZoTw0N0bZ1xU1Te@codercluster.2kusi8q.mongodb.net/?retryWrites=true&w=majority',
+        mongoOptions: { useNewUrlParser: true },
+        ttl: 3600
+    }),
+    secret: 'secretCoder',
+    resave: true,
+    saveUninitialized: true
+}))
+
 const server = app.listen(8080, () => console.log('Server running on port 8080'))
 
-const io = new Server(server)
+// const io = new Server(server)
 
 // const messages = await chatManager.getMessages()
-const messages = []
 
-io.on('connection', socket => {
-    socket.on('message', async data => {
-        // messages.push(data)
-            await messageModel.create(data)
-            try {
-            await chatManager.addMessage(data)
-            const messages = await chatManager.getMessages().toObject()
-            console.log(messages)
-            io.emit('messageLogs', messages)
-            } catch (error) {
-                console.log(error)
-            }
+// io.on('connection', socket => {
+//     socket.on('message', async data => {
+//         // messages.push(data)
+//             await messageModel.create(data)
+//             try {
+//             await chatManager.addMessage(data)
+//             const messages = await chatManager.getMessages().toObject()
+//             console.log(messages)
+//             io.emit('messageLogs', messages)
+//             } catch (error) {
+//                 console.log(error)
+//             }
             
-    })
-})
+//     })
+// })
