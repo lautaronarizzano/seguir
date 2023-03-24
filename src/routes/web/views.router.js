@@ -34,18 +34,19 @@ router.get('/products',privateAccess,  async (req, res) => {
         if (query == undefined) {
             const productsPaginates = await productModel.paginate({ }, {limit: limit, page: page, sort:{ price: sort}, lean:true})
             const products = productsPaginates.docs
+            console.log(req.session.user.rol)
             res.render('products', {products, user: req.session.user})
             
         } else {
             if(query == "comida" || query == "bebida" || query == "complemento") {
                 const productsPaginates = await productModel.paginate({ category: query }, {limit: limit, page: page, sort:{ price: sort}, lean:true})
                 const products = productsPaginates.docs
-            res.render('products', {products})
+            res.render('products', {products, user: req.session.user})
             }
             else if(query == "true" || query == "false"){
                 const productsPaginates = await productModel.paginate({ status: query }, {limit: limit, page: page, sort:{ price: sort}, lean:true})
                 const products = productsPaginates.docs
-            res.render('products', {products})
+            res.render('products', {products, user: req.session.user})
             }
             else{
                 console.log('query is not valid')

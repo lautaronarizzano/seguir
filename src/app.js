@@ -16,28 +16,17 @@ import MongoStore from 'connect-mongo'
 const chatManager = new Chats()
 
 const app = express()
-app.use(express.static(`${__dirname}/public`))
-
-//config de nuestras vistas
-app.engine('handlebars', handlebars.engine())
-app.set('views', `${__dirname}/views`)
-app.set('view engine', 'handlebars')
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
-// app.use('/chat', chatRouter)
-app.use('/', viewsRouter)
-app.use('/api/products', productsRouter)
-app.use('/api/carts', cartsRouter)
-app.use('/api/sessions', sessionsRouter)
-
 
 try {
     await mongoose.connect('mongodb+srv://lautaronarizzano:QZoTw0N0bZ1xU1Te@codercluster.2kusi8q.mongodb.net/?retryWrites=true&w=majority')
 } catch (error) {
     console.log(error)
 }
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(express.static(`${__dirname}/public`))
+
 
 app.use(session({
     store: MongoStore.create({
@@ -48,9 +37,20 @@ app.use(session({
     secret: 'secretCoder',
     resave: true,
     saveUninitialized: true
-}))
+}));
 
-const server = app.listen(8080, () => console.log('Server running on port 8080'))
+//config de nuestras vistas
+app.engine('handlebars', handlebars.engine())
+app.set('views', `${__dirname}/views`)
+app.set('view engine', 'handlebars')
+
+// app.use('/chat', chatRouter)
+app.use('/', viewsRouter)
+app.use('/api/products', productsRouter)
+app.use('/api/carts', cartsRouter)
+app.use('/api/sessions', sessionsRouter)
+
+app.listen(8080, () => console.log('Server running on port 8080'))
 
 // const io = new Server(server)
 

@@ -29,8 +29,15 @@ router.post('/register', async (req, res) => {
             last_name,
             email,
             age,
-            password
+            password,
+            rol: email.includes('admin') && password.includes('admin') ? 'admin' : 'user'
         }
+
+        // if (user.email.includes('admin') && user.password.includes('admin')) {
+        //     user.rol = 'admin'
+        // } else {
+        //     user.rol = 'user'
+        // }
 
         await userModel.create(user)
 
@@ -48,16 +55,26 @@ router.post('/register', async (req, res) => {
 })
 
 router.post('/login', async (req, res) => {
-    const {email, password} = req.body
+    const {
+        email,
+        password
+    } = req.body
 
     try {
-        const user = await userModel.findOne({email, password})
-        if(!user) return res.status(400).send({status: 'error', error: 'incorrect credentials'})
+        const user = await userModel.findOne({
+            email,
+            password
+        })
+        if (!user) return res.status(400).send({
+            status: 'error',
+            error: 'incorrect credentials'
+        })
 
         req.session.user = {
             name: `${user.first_name}  ${user.last_name}`,
             email: user.email,
-            age: user.age
+            age: user.age,
+            rol: user.rol
         }
 
         res.send({
@@ -74,10 +91,13 @@ router.post('/login', async (req, res) => {
     }
 })
 
-router.get('logout', (req, res) => {
+router.get('/logout', (req, res) => {
     req.session.destroy(err => {
-        if(err) return res.status(500).send({status:'error', error: "couldn't logout"})
-        res.redirect('/')
+        if (err) return res.status(500).send({
+            status: 'error',
+            error: "couldn't logout"
+        })
+        res.redirect('/login')
     })
 })
 
